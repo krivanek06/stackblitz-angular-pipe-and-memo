@@ -1,18 +1,17 @@
-import { Component } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
+import { Component } from "@angular/core";
+import { bootstrapApplication } from "@angular/platform-browser";
+import { provideAnimations } from "@angular/platform-browser/animations";
+import { ExamplePipeComponent } from "./example-pipe.component";
+import { provideHttpClient } from "@angular/common/http";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
-  template: `
-    <h1>Hello from {{ name }}!</h1>
-    <a target="_blank" href="https://angular.dev/overview">
-      Learn more about Angular
-    </a>
-  `,
+  imports: [ExamplePipeComponent],
+  template: ` <div class="px-10"><app-example-pipe /></div>`,
 })
-export class App {
-  name = 'Angular';
-}
+export class App {}
 
-bootstrapApplication(App);
+bootstrapApplication(App, {
+  providers: [provideHttpClient(), provideAnimations()],
+});

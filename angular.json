@@ -32,7 +32,10 @@
             "outputPath": "dist/demo",
             "polyfills": ["zone.js"],
             "scripts": [],
-            "styles": ["src/global_styles.css"],
+            "styles": [
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/global_styles.scss"
+            ],
             "tsConfig": "tsconfig.app.json"
           }
         },
