@@ -4,12 +4,11 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { Observable, scan } from "rxjs";
 import { ApiService } from "./api.service";
+import { AnimeData } from "./data.model";
+import { HardMathEquasionMemoPipe, HardMathEquasionPipe, PurePipe } from "./example-pipes.pipe";
+import { customMemoize } from "./memo.model";
 import { SearchAnimeComponent } from "./search-anime.component";
 import { TableHeaderComponent } from "./table-header.component";
-import { AnimeData, hardMathEquasion } from "./data.model";
-import { HardMathEquasionMemoPipe } from "./example-pipes.pipe";
-import { HardMathEquasionPipe } from "./example-pipes.pipe";
-import { PurePipe } from "./example-pipes.pipe";
 
 @Component({
   selector: "app-example-pipe",
@@ -31,10 +30,9 @@ import { PurePipe } from "./example-pipes.pipe";
       <div>{{ data.source }}</div>
       <div>{{ data.duration }}</div>
       <div>{{ data.score }}</div>
-      <!-- <div>{{ hardMathEquasionAsyncFunctionCallPipe | pure: data | async }}</div> -->
-      <!-- <div>{{ hardMathEquasionFunctionCallPipe | pure : data }}</div> -->
-      <div>{{ data | hardMathEquasionPipe | async }}</div>
-      <!-- <div>{{ (data| hardMathEquasionMemoPipe) | async }}</div> -->
+      <!-- <div>{{ data | hardMathEquasionPipe | async }}</div> -->
+      <!-- <div>{{ (equasionAsyncFunction | pure : data ) | async}}</div> -->
+      <div>{{ equasionAsyncFunctionMemo(data) | async }}</div>
     </div>
   `,
   styles: [],
@@ -52,22 +50,22 @@ import { PurePipe } from "./example-pipes.pipe";
   ],
 })
 export class ExamplePipeComponent {
-  private apiService = inject(ApiService);
-  animeSearchControl: FormControl<AnimeData> = new FormControl<AnimeData>(
-    {} as AnimeData,
-    { nonNullable: true }
-  );
-  loadedAnime$ = this.animeSearchControl.valueChanges.pipe(
+  private readonly apiService = inject(ApiService);
+  readonly animeSearchControl: FormControl<AnimeData> =
+    new FormControl<AnimeData>({} as AnimeData, { nonNullable: true });
+
+  readonly loadedAnime$ = this.animeSearchControl.valueChanges.pipe(
     scan((acc, curr) => [...acc, curr], [] as AnimeData[])
   );
 
-  hardMathEquasionFunctionCallPipe(anime: AnimeData): number {
-    console.log(`%c Function call ${anime.title}`, `color: #FEA42C`);
-    return hardMathEquasion(anime.score);
+  equasionAsyncFunction(anime: AnimeData): Observable<number> {
+    console.log(`%c [Async] Function call ${anime.title}`, `color: #22A42C`);
+    return this.apiService.hardMathEquasionAsync(anime);
   }
 
-  hardMathEquasionAsyncFunctionCallPipe(anime: AnimeData): Observable<number> {
-    console.log(`%c [Async] Function call ${anime.title}`, `color: #22A42C`);
+  @customMemoize()
+  equasionAsyncFunctionMemo(anime: AnimeData): Observable<number> {
+    console.log(`%c [Async] Function call ${anime.title}`, `color: #FFA42C`);
     return this.apiService.hardMathEquasionAsync(anime);
   }
 }
